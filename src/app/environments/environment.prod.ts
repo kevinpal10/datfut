@@ -4,5 +4,5 @@
 // Cambia `apiUrl` por el host real del backend antes de desplegar.
 export const environment = {
   production: true,
-  apiUrl: 'https://back-datfut.onrender.com/health'
+  apiUrl: 'https://back-datfut.onrender.com'
 };
