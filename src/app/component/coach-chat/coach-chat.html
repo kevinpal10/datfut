@@ -7,7 +7,7 @@
     [attr.aria-expanded]="abierto()"
     aria-controls="panel-entrenador">
     <span class="coach__icono" aria-hidden="true">🧠</span>
-    <span>Conversar con el Entrenador</span>
+    <span>Conversar con Profe KevBot</span>
     <span class="coach__chevron" aria-hidden="true">{{ abierto() ? '▾' : '▸' }}</span>
   </button>
 
@@ -15,10 +15,10 @@
     <div class="coach__panel" id="panel-entrenador">
 
       <!-- Conversación -->
-      <div class="coach__hilo" role="log" aria-live="polite" aria-label="Conversación con el entrenador">
+      <div class="coach__hilo" role="log" aria-live="polite" aria-label="Conversación con Profe KevBot">
         @if (turnos().length === 0) {
           <p class="coach__vacio">
-            Pregúntale al entrenador sobre
+            Pregúntale a Profe KevBot sobre
             <strong>{{ playerName || 'este jugador' }}</strong>
             o pídele una rutina indicando de cuántos minutos dispones.
           </p>
@@ -31,7 +31,7 @@
 
         @for (turno of turnos(); track $index) {
           <div class="coach__turno" [class.coach__turno--usuario]="turno.autor === 'usuario'">
-            <span class="coach__autor">{{ turno.autor === 'usuario' ? 'Tú' : 'Entrenador' }}</span>
+            <span class="coach__autor">{{ turno.autor === 'usuario' ? 'Tú' : 'Profe KevBot' }}</span>
             <p class="coach__texto">{{ turno.texto }}</p>
 
             @if (turno.autor === 'entrenador' && turno.fuentes && turno.fuentes.length) {
@@ -48,7 +48,7 @@
         }
 
         @if (enviando()) {
-          <p class="coach__cargando">El entrenador está revisando las estadísticas…</p>
+          <p class="coach__cargando">Profe KevBot está revisando las estadísticas…</p>
         }
         @if (error()) {
           <p class="coach__error" role="alert">{{ error() }}</p>
@@ -57,7 +57,7 @@
 
       <!-- Entrada -->
       <form class="coach__form" (ngSubmit)="enviar()">
-        <label class="sr-only" for="mensaje-entrenador">Mensaje para el entrenador</label>
+        <label class="sr-only" for="mensaje-entrenador">Mensaje para Profe KevBot</label>
         <input
           id="mensaje-entrenador"
           class="coach__input"
@@ -70,7 +70,7 @@
           type="submit"
           class="coach__enviar"
           [disabled]="enviando() || !borrador.trim()"
-          aria-label="Enviar mensaje al entrenador">
+          aria-label="Enviar mensaje a Profe KevBot">
           Enviar
         </button>
       </form>

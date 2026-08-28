@@ -3,13 +3,13 @@ import { expect, test } from '@playwright/test';
 import { RESPUESTA_AGENTE, interceptarBackend } from './fixtures';
 
 /**
- * E2E #2 — Conversación con el Entrenador y generación de rutina (SPEC §4.2).
+ * E2E #2 — Conversación con Profe KevBot y generación de rutina (SPEC §4.2).
  *
  * Comprueba las tres garantías del Módulo 3 desde fuera: que el contexto del
  * jugador viaja con la petición, que la rutina respeta el tiempo declarado, y
  * que la respuesta cita sus fuentes.
  */
-test.describe('Entrenador Táctico', () => {
+test.describe('Profe KevBot', () => {
 
   test.beforeEach(async ({ page }) => {
     await interceptarBackend(page);
@@ -27,7 +27,7 @@ test.describe('Entrenador Táctico', () => {
     await page.goto('/jugador/1100?season=2024');
     await expect(page.getByText('E. Haaland').first()).toBeVisible();
 
-    await page.getByRole('button', { name: /Conversar con el Entrenador/i }).click();
+    await page.getByRole('button', { name: /Conversar con Profe KevBot/i }).click();
 
     const campo = page.getByPlaceholder(/quiero mejorar mi definición/i);
     await campo.fill('Quiero mejorar mi definición, tengo 30 minutos');
@@ -56,7 +56,7 @@ test.describe('Entrenador Táctico', () => {
 
   test('el temporizador arranca en los minutos asignados y descuenta', async ({ page }) => {
     await page.goto('/jugador/1100?season=2024');
-    await page.getByRole('button', { name: /Conversar con el Entrenador/i }).click();
+    await page.getByRole('button', { name: /Conversar con Profe KevBot/i }).click();
     await page.getByPlaceholder(/quiero mejorar mi definición/i).fill('rutina de 30 minutos');
     await page.getByRole('button', { name: 'Enviar' }).click();
 
@@ -81,7 +81,7 @@ test.describe('Entrenador Táctico', () => {
     });
 
     await page.goto('/jugador/1100?season=2024');
-    await page.getByRole('button', { name: /Conversar con el Entrenador/i }).click();
+    await page.getByRole('button', { name: /Conversar con Profe KevBot/i }).click();
 
     await expect(page.getByRole('button', { name: 'Enviar' })).toBeDisabled();
     expect(llamadas).toBe(0);

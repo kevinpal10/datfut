@@ -56,7 +56,7 @@ test.describe('Exploración', () => {
     // Si el *ngFor recreara sus hijos en cada ciclo, el hilo principal quedaría
     // saturado y esta interacción se quedaría sin respuesta.
     const inicio = Date.now();
-    await page.getByRole('button', { name: /Conversar con el Entrenador/i }).click();
+    await page.getByRole('button', { name: /Conversar con Profe KevBot/i }).click();
     await expect(page.getByPlaceholder(/quiero mejorar mi definición/i)).toBeVisible();
     expect(Date.now() - inicio).toBeLessThan(5000);
   });
