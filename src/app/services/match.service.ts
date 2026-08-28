@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { MatchAnalysis, RivalStats, Formation } from '../core/match.model';
-import { environment } from '../enviroment/environment';
+import { environment } from '../environments/environment';
 
 // ─── Shapes de respuesta de ApiFast ──────────────────────────────────────────
 // Tu ApiFast actúa como BFF: recibe estos endpoints y devuelve

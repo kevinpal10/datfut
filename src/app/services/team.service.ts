@@ -1,24 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamService {
 
-  private apiUrl = 'http://127.0.0.1:8000/players';
+  private http = inject(HttpClient);
+  // Antes apuntaba a `/players/country/...`, que no existe en el backend y
+  // devolvía 404. Las rutas reales cuelgan de `/teams`.
+  private apiUrl = `${environment.apiUrl}/teams`;
 
-  constructor(
-    private http: HttpClient
-  ) {
-
-   }
-
-  getPlayersByCountry(nameCountry: string) {
-    return this.http.get(`${this.apiUrl}/country/${nameCountry}`);
+  getTeamById(teamId: number) {
+    return this.http.get(`${this.apiUrl}/id/${teamId}`);
   }
 
-  getTeamsByCountry(code: string) {
-    return this.http.get(`${this.apiUrl}/country/${code}`);
+  getTeamsByCountry(country: string) {
+    return this.http.get(`${this.apiUrl}/country/${encodeURIComponent(country)}`);
+  }
+
+  getTeamsByCode(code: string) {
+    return this.http.get(`${this.apiUrl}/code/${encodeURIComponent(code)}`);
+  }
+
+  getTeamsByLeagueAndSeason(league: string, season: number) {
+    return this.http.get(`${this.apiUrl}/league/${league}/season/${season}`);
   }
 }

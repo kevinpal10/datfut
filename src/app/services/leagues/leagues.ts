@@ -1,27 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Leagues {
 
-  private apiUrl = 'http://127.0.0.1:8000/leagues/';
-
-  constructor(
-    private http: HttpClient
-  ) {
-
-   }
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/leagues`;
 
   getLiguesByCountry(countryName: string) {
-    const apiUrl = `${this.apiUrl}${countryName}`;
-    return this.http.get(apiUrl);
-  } 
+    return this.http.get(`${this.apiUrl}/${encodeURIComponent(countryName)}`);
+  }
 
   getTeamsByLeague(leagueId: number, season: number) {
-    const apiUrl = `${this.apiUrl}teams/${leagueId}/${season}`;
-    return this.http.get(apiUrl);
+    return this.http.get(`${this.apiUrl}/teams/${leagueId}/${season}`);
   }
 
 }

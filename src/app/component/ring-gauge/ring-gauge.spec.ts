@@ -1,23 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RingGauge } from './ring-gauge';
+import { RingGaugeComponent } from './ring-gauge';
+import { providersDePrueba } from '../../testing/test-providers';
 
-describe('RingGauge', () => {
-  let component: RingGauge;
-  let fixture: ComponentFixture<RingGauge>;
+describe('RingGaugeComponent', () => {
+  let component: RingGaugeComponent;
+  let fixture: ComponentFixture<RingGaugeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RingGauge]
-    })
-    .compileComponents();
+      imports: [RingGaugeComponent],
+      providers: providersDePrueba({}),
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(RingGauge);
+    fixture = TestBed.createComponent(RingGaugeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('se crea', () => {
     expect(component).toBeTruthy();
   });
 });

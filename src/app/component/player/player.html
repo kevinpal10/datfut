@@ -52,8 +52,8 @@
       </div>
 
       <!-- Totales -->
-      <div class="totals" *ngIf="currentStatCards() as cards">
-        <div class="total-cell" *ngFor="let c of cards">
+      <div class="totals" *ngIf="statCards.length">
+        <div class="total-cell" *ngFor="let c of statCards; trackBy: trackPorEtiqueta">
           <span class="total-num" [style.color]="c.num === '—' ? 'rgba(255,255,255,0.3)' : c.color">{{ c.num }}</span>
           <span class="total-lbl">{{ c.lbl }}</span>
         </div>
@@ -63,35 +63,33 @@
       <div class="mid-row">
 
         <!-- Radar -->
-        <svg viewBox="0 0 300 270" style="width:100%;" *ngIf="getRadarMetrics() as radar">
+        <svg viewBox="0 0 300 270" style="width:100%;" *ngIf="radarMetrics.length">
           <g stroke="rgba(255,255,255,0.12)" fill="none" stroke-width="1">
-            <polygon [attr.points]="radarPolygon(radar, 1)"/>
-            <polygon [attr.points]="radarPolygon(radar, 0.66)"/>
-            <polygon [attr.points]="radarPolygon(radar, 0.33)"/>
+            <polygon *ngFor="let anillo of radar.rejilla" [attr.points]="anillo"/>
           </g>
           <g stroke="rgba(255,255,255,0.12)" stroke-width="1">
-            <line *ngFor="let p of radarAxes(radar)" [attr.x1]="150" [attr.y1]="140" [attr.x2]="p.x" [attr.y2]="p.y"/>
+            <line *ngFor="let p of radar.ejes" [attr.x1]="150" [attr.y1]="140" [attr.x2]="p.x" [attr.y2]="p.y"/>
           </g>
-          <polygon [attr.points]="radarDataPolygon(radar)" fill="#25C893" fill-opacity="0.3" stroke="#25C893" stroke-width="2"/>
+          <polygon [attr.points]="radar.poligono" fill="#25C893" fill-opacity="0.3" stroke="#25C893" stroke-width="2"/>
           <g fill="#25C893">
-            <circle *ngFor="let p of radarDataPoints(radar)" [attr.cx]="p.x" [attr.cy]="p.y" r="3.5"/>
+            <circle *ngFor="let p of radar.puntos" [attr.cx]="p.x" [attr.cy]="p.y" r="3.5"/>
           </g>
           <g font-size="10" fill="rgba(255,255,255,0.55)" font-family="'DM Sans',sans-serif">
-            <text *ngFor="let l of radarLabels(radar)" [attr.x]="l.x" [attr.y]="l.y" [attr.text-anchor]="l.anchor">{{ l.label }}</text>
+            <text *ngFor="let l of radar.etiquetas" [attr.x]="l.x" [attr.y]="l.y" [attr.text-anchor]="l.anchor">{{ l.label }}</text>
           </g>
         </svg>
 
         <!-- Anillos de efectividad -->
         <div class="rings-grid">
           <app-ring-gauge
-            *ngFor="let r of currentRingMetrics()"
+            *ngFor="let r of ringMetrics; trackBy: trackPorEtiqueta"
             [pct]="r.pct" [color]="r.color" [label]="r.label" [detail]="r.detail"/>
         </div>
       </div>
 
       <!-- Volumen de juego -->
       <div class="counts" *ngIf="!showOverall && activeStatistic">
-        <div class="count-item" *ngFor="let c of getCountMetrics(activeStatistic)">
+        <div class="count-item" *ngFor="let c of countMetrics; trackBy: trackPorEtiqueta">
           <div class="count-icon" [style.background]="c.bg">{{ c.icon }}</div>
           <div>
             <div class="count-num">{{ c.num }}</div>
@@ -102,6 +100,12 @@
 
     </div>
   </div>
+
+  <!-- Entrenador Táctico: chatea sobre el jugador que ya está en pantalla -->
+  <app-coach-chat
+    [playerId]="playerId"
+    [season]="season"
+    [playerName]="playerData.player.name" />
 </div>
 
 <div class="loading-state" *ngIf="loading">Cargando jugador...</div>

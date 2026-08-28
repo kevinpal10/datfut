@@ -1,0 +1,116 @@
+<section class="coach" [class.coach--abierto]="abierto()">
+
+  <button
+    type="button"
+    class="coach__toggle"
+    (click)="alternar()"
+    [attr.aria-expanded]="abierto()"
+    aria-controls="panel-entrenador">
+    <span class="coach__icono" aria-hidden="true">🧠</span>
+    <span>Conversar con el Entrenador</span>
+    <span class="coach__chevron" aria-hidden="true">{{ abierto() ? '▾' : '▸' }}</span>
+  </button>
+
+  @if (abierto()) {
+    <div class="coach__panel" id="panel-entrenador">
+
+      <!-- Conversación -->
+      <div class="coach__hilo" role="log" aria-live="polite" aria-label="Conversación con el entrenador">
+        @if (turnos().length === 0) {
+          <p class="coach__vacio">
+            Pregúntale al entrenador sobre
+            <strong>{{ playerName || 'este jugador' }}</strong>
+            o pídele una rutina indicando de cuántos minutos dispones.
+          </p>
+          <div class="coach__sugerencias">
+            @for (s of sugerencias; track s) {
+              <button type="button" class="coach__chip" (click)="usarSugerencia(s)">{{ s }}</button>
+            }
+          </div>
+        }
+
+        @for (turno of turnos(); track $index) {
+          <div class="coach__turno" [class.coach__turno--usuario]="turno.autor === 'usuario'">
+            <span class="coach__autor">{{ turno.autor === 'usuario' ? 'Tú' : 'Entrenador' }}</span>
+            <p class="coach__texto">{{ turno.texto }}</p>
+
+            @if (turno.autor === 'entrenador' && turno.fuentes && turno.fuentes.length) {
+              <details class="coach__fuentes">
+                <summary>Fuentes de los datos ({{ turno.fuentes.length }})</summary>
+                <ul>
+                  @for (fuente of turno.fuentes; track $index) {
+                    <li>{{ fuente | json }}</li>
+                  }
+                </ul>
+              </details>
+            }
+          </div>
+        }
+
+        @if (enviando()) {
+          <p class="coach__cargando">El entrenador está revisando las estadísticas…</p>
+        }
+        @if (error()) {
+          <p class="coach__error" role="alert">{{ error() }}</p>
+        }
+      </div>
+
+      <!-- Entrada -->
+      <form class="coach__form" (ngSubmit)="enviar()">
+        <label class="sr-only" for="mensaje-entrenador">Mensaje para el entrenador</label>
+        <input
+          id="mensaje-entrenador"
+          class="coach__input"
+          [(ngModel)]="borrador"
+          name="mensaje"
+          autocomplete="off"
+          placeholder="Ej: quiero mejorar mi definición, tengo 30 minutos"
+          [disabled]="enviando()" />
+        <button
+          type="submit"
+          class="coach__enviar"
+          [disabled]="enviando() || !borrador.trim()"
+          aria-label="Enviar mensaje al entrenador">
+          Enviar
+        </button>
+      </form>
+
+      <!-- Rutina + temporizador -->
+      @if (rutina(); as r) {
+        <div class="rutina">
+          <header class="rutina__cab">
+            <h3 class="rutina__titulo">
+              Rutina de {{ r.minutos_asignados }} min · {{ r.posicion }}
+            </h3>
+            <div class="rutina__reloj bebas">{{ reloj }}</div>
+          </header>
+
+          <div class="rutina__controles">
+            @if (!corriendo()) {
+              <button type="button" class="rutina__btn rutina__btn--play"
+                      (click)="iniciar()" [disabled]="segundosRestantes() === 0">
+                Iniciar
+              </button>
+            } @else {
+              <button type="button" class="rutina__btn" (click)="detener()">Pausar</button>
+            }
+            <button type="button" class="rutina__btn" (click)="reiniciar()">Reiniciar</button>
+          </div>
+
+          <ol class="rutina__lista">
+            @for (ejercicio of r.ejercicios; track ejercicio.nombre) {
+              <li class="rutina__item">
+                <div class="rutina__item-cab">
+                  <span class="rutina__nombre">{{ ejercicio.nombre }}</span>
+                  <span class="rutina__duracion">{{ ejercicio.duracion_min }} min</span>
+                </div>
+                <p class="rutina__desc">{{ ejercicio.descripcion }}</p>
+              </li>
+            }
+          </ol>
+        </div>
+      }
+
+    </div>
+  }
+</section>

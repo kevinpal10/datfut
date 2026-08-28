@@ -1,32 +1,36 @@
-/* You can add global styles to this file, and also import other style files
-@import "tailwindcss";
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-@tailwind base;
-@tailwind components;
-@tailwind utilities; */
-
 /* styles.css — estilos globales del dashboard */
 
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 :root {
+  /* Paleta de marca */
   --color-field-green:   #1a6b30;
   --color-accent-green:  #1D9E75;
   --color-accent-blue:   #378ADD;
   --color-accent-amber:  #EF9F27;
   --color-accent-red:    #E24B4A;
+
+  /* Superficies y texto. Los componentes de análisis de partido las usaban
+     sin que estuvieran definidas en ninguna parte, así que la pantalla se
+     renderizaba con bordes y fondos transparentes. */
+  --color-background-primary:   #ffffff;
+  --color-background-secondary: #f5f5f5;
+  --color-background-tertiary:  #fafafa;
+  --color-border-tertiary:      #e0e0e0;
+  --color-text-primary:         #1a1a1a;
+  --color-text-secondary:       #6b6b6b;
 }
 
 body {
   margin: 0;
   padding: 24px;
   font-family: 'DM Sans', sans-serif;
-  background: #f5f5f5;
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
 }
 
 /* Números grandes siempre en Bebas Neue */
@@ -39,3 +43,32 @@ body {
 .role-def { background: #FBBF24; color: #1a1a1a; }
 .role-mid  { background: #3B82F6; color: #ffffff; }
 .role-fwd  { background: #E24B4A; color: #ffffff; }
+
+/* Aviso global de datos servidos desde caché (SPEC §4.3) */
+.aviso-cache {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+}
+.aviso-cache__cerrar {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+.aviso-cache__cerrar:hover { color: #fff; }

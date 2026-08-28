@@ -1,0 +1,76 @@
+name: CI
+
+# SPEC §3, Módulo 4: las pruebas corren en cada push a `main` y en cada PR.
+# El despliegue en Vercel sólo debe dispararse si este workflow pasa.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit:
+    name: Unitarias y build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Pruebas unitarias
+        # ChromeHeadless ya viene en los runners de GitHub.
+        run: npm run test:ci
+
+      - name: Build de producción
+        # Usa `environment.prod.ts` vía `fileReplacements`. Si alguien rompe esa
+        # sustitución, el build sigue pasando pero apuntaría al backend local:
+        # por eso se comprueba abajo.
+        run: npm run build
+
+      - name: Comprobar que el bundle no apunta a localhost
+        run: |
+          if grep -rq "127.0.0.1:800" dist/dashboard_futbol/browser/*.js; then
+            echo "::error::El bundle de producción contiene una URL local. Revisa environment.prod.ts y fileReplacements."
+            exit 1
+          fi
+          echo "OK: el bundle no referencia el backend local."
+
+  e2e:
+    name: Playwright
+    runs-on: ubuntu-latest
+    needs: unit
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Instalar navegador
+        run: npx playwright install --with-deps chromium
+
+      - name: Pruebas E2E
+        # Playwright levanta `ng serve` por su cuenta e intercepta las llamadas
+        # al backend con las fixtures de `e2e/fixtures.ts`: no hace falta ni el
+        # backend ni credenciales de api-football.
+        run: npm run e2e
+
+      - name: Guardar el informe si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

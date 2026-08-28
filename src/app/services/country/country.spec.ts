@@ -1,16 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 
 import { Country } from './country';
+import { provideHttpTesting } from '../../testing/test-providers';
 
 describe('Country', () => {
   let service: Country;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: provideHttpTesting() });
     service = TestBed.inject(Country);
   });
 
-  it('should be created', () => {
+  it('se crea', () => {
     expect(service).toBeTruthy();
   });
 });

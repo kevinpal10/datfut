@@ -1,23 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LeaguesComponent } from './leagues.component';
+import { LeagueComponent } from './leagues.component';
+import { providersDePrueba } from '../../testing/test-providers';
 
-describe('LeaguesComponent', () => {
-  let component: LeaguesComponent;
-  let fixture: ComponentFixture<LeaguesComponent>;
+describe('LeagueComponent', () => {
+  let component: LeagueComponent;
+  let fixture: ComponentFixture<LeagueComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LeaguesComponent]
-    })
-    .compileComponents();
+      imports: [LeagueComponent],
+      providers: providersDePrueba({ params: { id: '39' }, queryParams: { season: '2024' } }),
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(LeaguesComponent);
+    fixture = TestBed.createComponent(LeagueComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('se crea', () => {
     expect(component).toBeTruthy();
   });
 });

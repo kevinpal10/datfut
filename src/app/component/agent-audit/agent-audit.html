@@ -1,0 +1,103 @@
+<div class="auditoria">
+
+  <button class="auditoria__volver" (click)="volver()">&#8592; Volver a países</button>
+
+  <header class="auditoria__cab">
+    <h1 class="auditoria__titulo bebas">Auditoría del Entrenador</h1>
+    <p class="auditoria__sub">
+      Qué herramientas invocó el agente, con qué argumentos y cuánto tardó.
+      Si una respuesta cita cifras, tiene que haber una consulta de métricas detrás.
+    </p>
+  </header>
+
+  @if (cargando()) {
+    <p class="auditoria__estado">Cargando ejecuciones…</p>
+  }
+
+  @if (error(); as e) {
+    <p class="auditoria__error" role="alert">{{ e }}</p>
+  }
+
+  @if (!cargando() && !error() && runs().length === 0) {
+    <p class="auditoria__estado">
+      Todavía no hay ejecuciones registradas. Conversa con el Entrenador desde la ficha
+      de un jugador y vuelve aquí.
+    </p>
+  }
+
+  <!-- Ejecuciones -->
+  @if (runs().length) {
+    <h2 class="auditoria__seccion">Ejecuciones ({{ runs().length }})</h2>
+
+    <ul class="runs">
+      @for (run of runs(); track run.id) {
+        <li class="run">
+          <div class="run__cab">
+            <span class="run__id">{{ run.conversation_id }}</span>
+            <span class="run__fecha">{{ fecha(run.created_at) }}</span>
+            <span class="run__lat" [class]="claseLatencia(run.latency_ms)">
+              {{ run.latency_ms !== null ? run.latency_ms + ' ms' : '—' }}
+            </span>
+          </div>
+
+          <p class="run__prompt">{{ run.prompt }}</p>
+
+          <div class="run__meta">
+            <span class="run__modelo">
+              {{ run.model ? run.model : 'sin modelo (degradado)' }}
+            </span>
+
+            @if (consultoMetricas(run)) {
+              <span class="sello sello--ok" title="Consultó estadísticas reales antes de responder">
+                ✓ métricas verificadas
+              </span>
+            } @else {
+              <span class="sello sello--aviso" title="No invocó la herramienta de métricas">
+                sin consulta de métricas
+              </span>
+            }
+          </div>
+
+          @if (run.tool_calls?.length) {
+            <table class="tools">
+              <thead>
+                <tr><th>Herramienta</th><th>Argumentos</th><th>Latencia</th></tr>
+              </thead>
+              <tbody>
+                @for (call of run.tool_calls; track $index) {
+                  <tr>
+                    <td class="tools__nombre">{{ call.tool }}</td>
+                    <td class="tools__args">{{ argumentos(call) }}</td>
+                    <td class="tools__lat">{{ latencia(call.latency_ms) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  <!-- Rutinas guardadas -->
+  @if (routines().length) {
+    <h2 class="auditoria__seccion">Rutinas generadas ({{ routines().length }})</h2>
+
+    <table class="rutinas">
+      <thead>
+        <tr><th>#</th><th>Fecha</th><th>Posición</th><th>Minutos</th><th>Ejercicios</th></tr>
+      </thead>
+      <tbody>
+        @for (r of routines(); track r.id) {
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ fecha(r.created_at) }}</td>
+            <td class="rutinas__pos">{{ r.posicion }}</td>
+            <td>{{ r.minutos }} min</td>
+            <td>{{ r.payload?.ejercicios?.length ?? 0 }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

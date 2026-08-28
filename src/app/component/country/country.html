@@ -24,6 +24,14 @@
     </mat-autocomplete>
   </mat-form-field>
 
+  <!-- Atajo a la ficha sin recorrer pais -> liga -> equipo (SPEC 2.1.1) -->
+  <p class="buscar-jugador" *ngIf="!isTeamMode">
+    &iquest;Buscas un jugador concreto?
+    <a routerLink="/buscar">Busca por nombre</a>
+    <span class="buscar-jugador__sep">·</span>
+    <a routerLink="/auditoria">Auditor&iacute;a del agente</a>
+  </p>
+
   <ng-container *ngIf="countryInfo">
     <!-- ── Info país/equipo + Campeonatos ─────────────────────────────────── -->
     <div class="top-grid">

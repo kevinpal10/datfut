@@ -63,9 +63,13 @@ export class RingGaugeComponent implements OnInit, OnChanges {
   dashOffset = 0;
 
   ngOnInit(): void {
-    this.dashOffset = this.circumference;
-    setTimeout(() => this.updateOffset(), 50);
+    // Sin setTimeout: zone.js dispara deteccion de cambios por cada temporizador,
+    // y si el *ngFor de arriba recrea estos anillos, cada recreacion programaba
+    // uno nuevo. Eso realimentaba la deteccion hasta colgar la pestana. La
+    // animacion de entrada ya la hace la keyframe `ringFill` en CSS.
+    this.updateOffset();
   }
+
   ngOnChanges(): void { this.updateOffset(); }
 
   private updateOffset(): void {

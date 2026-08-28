@@ -1,1 +1,12 @@
-<router-outlet> </router-outlet>
+<router-outlet></router-outlet>
+
+@if (freshness.servidoDesdeCache()) {
+  <div class="aviso-cache" role="status">
+    <span>Mostrando datos guardados en caché por la alta demanda de la API.</span>
+    <button
+      type="button"
+      class="aviso-cache__cerrar"
+      (click)="freshness.descartar()"
+      aria-label="Cerrar aviso">&times;</button>
+  </div>
+}

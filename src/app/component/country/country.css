@@ -302,3 +302,16 @@
 .leagues-scroll::-webkit-scrollbar-thumb:hover {
   background: #bbb;
 }
+/* Atajo al buscador de jugadores por nombre. */
+.buscar-jugador {
+  margin: -4px 0 20px;
+  font-size: 13px;
+  color: #6b6b6b;
+}
+.buscar-jugador a {
+  color: var(--color-accent-green, #1D9E75);
+  font-weight: 500;
+  text-decoration: none;
+}
+.buscar-jugador a:hover { text-decoration: underline; }
+.buscar-jugador__sep { margin: 0 6px; color: #c0c0c0; }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TeamInLeague } from './leagues.model';
 import { Leagues } from '../../services/leagues/leagues';
+import { parseSeason } from '../../core/season';
 
 @Component({
   selector: 'app-league',
@@ -33,13 +34,15 @@ export class LeagueComponent implements OnInit {
     this.leagueLogo    = this.route.snapshot.queryParamMap.get('logo')    ?? '';
     this.leagueType    = this.route.snapshot.queryParamMap.get('type')    ?? '';
     this.leagueCountry = this.route.snapshot.queryParamMap.get('country') ?? '';
-    this.currentSeason = Number(this.route.snapshot.queryParamMap.get('season')) || 2024;
+    this.currentSeason = parseSeason(this.route.snapshot.queryParamMap.get('season'));
 
     // ── Conecta tu servicio aquí ──────────────────────────────────────────
     this.leagueService.getTeamsByLeague(this.leagueId, this.currentSeason)
       .subscribe({
         next: (data: any) => {
-          this.teams   = data;
+          // El backend devuelve el array de api-football tal cual; si la cuota
+          // se agotó puede llegar vacío o no ser un array.
+          this.teams   = Array.isArray(data) ? data : [];
           this.loading = false;
         },
         error: () => this.loading = false,
@@ -57,6 +60,7 @@ export class LeagueComponent implements OnInit {
         founded : item.team.founded,
         code    : item.team.code,
         leagueId: this.leagueId,   // ← para poder volver
+        season  : this.currentSeason,  // ← la temporada viaja hasta la ficha
       }
     });
   }

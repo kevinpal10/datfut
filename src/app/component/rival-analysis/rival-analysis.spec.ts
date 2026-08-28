@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RivalAnalysis } from './rival-analysis';
+import { providersDePrueba } from '../../testing/test-providers';
+import { ANALISIS_RIVAL } from '../../testing/match-fixtures';
 
 describe('RivalAnalysis', () => {
   let component: RivalAnalysis;
@@ -8,16 +10,25 @@ describe('RivalAnalysis', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RivalAnalysis]
-    })
-    .compileComponents();
+      imports: [RivalAnalysis],
+      providers: providersDePrueba(),
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RivalAnalysis);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('analysis', ANALISIS_RIVAL);
+    fixture.componentRef.setInput('teamName', 'Argentina');
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('se crea', () => {
     expect(component).toBeTruthy();
   });
+
+  it('muestra fortalezas y debilidades del rival', () => {
+    const texto = fixture.nativeElement.textContent;
+    expect(texto).toContain('Desborde por bandas');
+    expect(texto).toContain('Espalda de los laterales');
+  });
+
 });

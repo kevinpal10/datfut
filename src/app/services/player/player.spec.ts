@@ -1,16 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 
 import { Player } from './player';
+import { provideHttpTesting } from '../../testing/test-providers';
 
 describe('Player', () => {
   let service: Player;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({ providers: provideHttpTesting() });
     service = TestBed.inject(Player);
   });
 
-  it('should be created', () => {
+  it('se crea', () => {
     expect(service).toBeTruthy();
   });
 });

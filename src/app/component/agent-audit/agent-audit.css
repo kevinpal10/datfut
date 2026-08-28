@@ -1,0 +1,125 @@
+/* Auditoría del agente. Tema claro, como el resto de pantallas de gestión. */
+
+.auditoria {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 8px 0 48px;
+}
+
+.auditoria__volver {
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-green, #1D9E75);
+  font: 500 13px "DM Sans", sans-serif;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.auditoria__volver:hover { text-decoration: underline; }
+
+.auditoria__cab { margin: 16px 0 24px; }
+.auditoria__titulo {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: 0.02em;
+  color: var(--color-field-green, #1a6b30);
+}
+.auditoria__sub {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #5b5b5b;
+  max-width: 62ch;
+  line-height: 1.5;
+}
+
+.auditoria__seccion {
+  margin: 32px 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.auditoria__estado { margin: 20px 2px; font-size: 14px; color: #6b6b6b; }
+.auditoria__error { margin: 20px 2px; font-size: 14px; color: var(--color-accent-red, #E24B4A); }
+
+/* ── Ejecuciones ────────────────────────────────────────────────────────── */
+
+.runs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+.run {
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px 16px;
+}
+
+.run__cab { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.run__id {
+  font: 600 13px "DM Sans", sans-serif;
+  color: var(--color-accent-blue, #378ADD);
+}
+.run__fecha { font-size: 12px; color: #8a8a8a; }
+.run__lat { margin-left: auto; font-size: 12px; font-weight: 600; }
+.lat--ok    { color: var(--color-accent-green, #1D9E75); }
+.lat--medio { color: var(--color-accent-amber, #EF9F27); }
+.lat--lento { color: var(--color-accent-red, #E24B4A); }
+
+.run__prompt {
+  margin: 8px 0 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #2b2b2b;
+}
+
+.run__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.run__modelo { font-size: 11px; color: #8a8a8a; font-family: ui-monospace, monospace; }
+
+.sello {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+.sello--ok    { background: rgba(29, 158, 117, 0.12); color: #16785a; }
+.sello--aviso { background: rgba(239, 159, 39, 0.15); color: #a06a10; }
+
+/* ── Tablas ─────────────────────────────────────────────────────────────── */
+
+.tools, .rutinas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.tools { background: #fafafa; border-radius: 8px; overflow: hidden; }
+
+.tools th, .rutinas th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8a8a8a;
+  font-weight: 500;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e6e6e6;
+}
+.tools td, .rutinas td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #2b2b2b;
+}
+.tools tr:last-child td, .rutinas tr:last-child td { border-bottom: 0; }
+
+.tools__nombre { font-family: ui-monospace, monospace; font-size: 12px; color: var(--color-field-green, #1a6b30); }
+.tools__args   { font-family: ui-monospace, monospace; font-size: 12px; color: #6b6b6b; }
+.tools__lat    { white-space: nowrap; color: #8a8a8a; }
+
+.rutinas {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.rutinas__pos { text-transform: capitalize; }
+
+@media (max-width: 640px) {
+  .tools, .rutinas { display: block; overflow-x: auto; }
+}

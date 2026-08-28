@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Statistics } from '../../services/statistics/statistics';
 import { PlayerDetail, PlayerStatistic } from './player.model';
 import { RingGaugeComponent } from '../ring-gauge/ring-gauge';
+import { parseSeason } from '../../core/season';
+import { CoachChatComponent } from '../coach-chat/coach-chat';
 
 interface RadarMetric { label: string; value: number; }
 interface StatCard { num: string; lbl: string; color: string; }
@@ -11,7 +13,7 @@ interface StatCard { num: string; lbl: string; color: string; }
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule, RingGaugeComponent],
+  imports: [CommonModule, RingGaugeComponent, CoachChatComponent],
   templateUrl: './player.html',
   styleUrl: './player.css'
 })
@@ -22,6 +24,9 @@ export class PlayerComponent implements OnInit {
   private statisticsService = inject(Statistics);
 
   playerData: PlayerDetail | null = null;
+  /** Contexto que viaja con cada petición al entrenador (SPEC §4.2.2). */
+  playerId = 0;
+  season = 0;
   activeStatistic: PlayerStatistic | null = null;
   activeIndex = 0;
   showOverall = false;
@@ -37,12 +42,15 @@ export class PlayerComponent implements OnInit {
 
   ngOnInit(): void {
     const playerId = Number(this.route.snapshot.paramMap.get('id'));
-    const season   = Number(this.route.snapshot.queryParamMap.get('season')) || 2024;
+    const season   = parseSeason(this.route.snapshot.queryParamMap.get('season'));
+    this.playerId = playerId;
+    this.season   = season;
 
     this.statisticsService.getPlayerStats(playerId, season).subscribe({
       next: (data: any) => {
-        this.playerData = data[0];
-        this.activeStatistic = data[0].statistics?.[0] ?? null;
+        this.playerData = data?.[0] ?? null;
+        this.activeStatistic = this.playerData?.statistics?.[0] ?? null;
+        this.refrescarVista();
         this.loading = false;
       },
       error: () => this.loading = false,
@@ -59,9 +67,54 @@ export class PlayerComponent implements OnInit {
       this.activeIndex = index;
       this.activeStatistic = this.playerData!.statistics[index];
     }
+    this.refrescarVista();
   }
 
   goBack(): void { this.router.navigate(['/paises']); }
+
+  // ══════════════════════════════════════════════════════════════════════
+  // VISTA MEMORIZADA
+  //
+  // Estos arrays los consume la plantilla. NO deben calcularse desde el HTML:
+  // un metodo que devuelve un array nuevo en cada ciclo de deteccion hace que
+  // *ngFor destruya y recree sus hijos cada vez. Con `app-ring-gauge`, que
+  // programa un setTimeout al nacer, eso realimentaba la deteccion de cambios
+  // y colgaba la pestana. Se recalculan solo cuando cambian los datos.
+  // ══════════════════════════════════════════════════════════════════════
+  statCards: StatCard[] = [];
+  ringMetrics: any[] = [];
+  countMetrics: any[] = [];
+  radarMetrics: RadarMetric[] = [];
+  /** Geometria del radar, ya resuelta: la plantilla solo lee. */
+  radar = {
+    rejilla: [] as string[],
+    ejes: [] as { x: number; y: number }[],
+    poligono: '',
+    puntos: [] as { x: number; y: number }[],
+    etiquetas: [] as { label: string; x: string; y: string; anchor: string }[],
+  };
+
+  /** Unico punto que recalcula la vista. Llamar tras cargar o cambiar de pestana. */
+  private refrescarVista(): void {
+    this.statCards   = this.currentStatCards();
+    this.ringMetrics = this.currentRingMetrics();
+    this.countMetrics = (!this.showOverall && this.activeStatistic)
+      ? this.getCountMetrics(this.activeStatistic)
+      : [];
+    this.radarMetrics = this.getRadarMetrics();
+
+    const m = this.radarMetrics;
+    this.radar = {
+      rejilla:   m.length ? [1, 0.66, 0.33].map(e => this.radarPolygon(m, e)) : [],
+      ejes:      this.radarAxes(m),
+      poligono:  m.length ? this.radarDataPolygon(m) : '',
+      puntos:    this.radarDataPoints(m),
+      etiquetas: this.radarLabels(m),
+    };
+  }
+
+  // `track` de los *ngFor: sin esto Angular compara por identidad de objeto.
+  trackPorEtiqueta = (_: number, item: any) => item.lbl ?? item.label ?? _;
 
   // ── Wrappers: elige entre liga activa o resumen ──────────────────────────
   currentStatCards(): StatCard[] {

@@ -3,12 +3,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Country } from '../../services/country/country';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { Leagues } from '../../services/leagues/leagues';
+import { parseSeason } from '../../core/season';
 
 
 @Component({
@@ -20,7 +21,8 @@ import { Leagues } from '../../services/leagues/leagues';
     CommonModule,
     ReactiveFormsModule,
     MatAutocompleteModule,
-    MatInputModule
+    MatInputModule,
+    RouterLink
   ],
   templateUrl: './country.html',
   styleUrl: './country.css'
@@ -35,6 +37,8 @@ export class CountryComponent implements OnInit {
   filteredCountry: any[] = [];
   searchControl = new FormControl('');
   isTeamMode = false;
+  /** Temporada vigente del flujo; llega por query param desde el campeonato. */
+  season = 0;
   activeLeagues: any[] = [];
   private route  = inject(ActivatedRoute);
   
@@ -47,6 +51,10 @@ export class CountryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    // La temporada elegida en el campeonato es la que debe llegar a la ficha
+    // del jugador (SPEC §4.1), no un valor distinto en cada pantalla.
+    this.season = parseSeason(this.route.snapshot.queryParamMap.get('season'));
 
     // Logica en caso de que sea un equipo
     const teamId = this.route.snapshot.queryParamMap.get('teamId');
@@ -68,6 +76,7 @@ export class CountryComponent implements OnInit {
 
     // Obtener equipos y filtrar por nombre único
     this.countryService.getCountries().subscribe((data: any) => {
+      if (!Array.isArray(data)) { this.countries = []; this.filteredCountry = []; return; }
       this.countries = data
         .filter((league: any, index: number, self: any[]) =>
           index === self.findIndex((l: any) => l.name === league.name)
@@ -102,9 +111,11 @@ export class CountryComponent implements OnInit {
 
   // ── Obtener jugadores del país seleccionado ────────────────────────────────
   getPlayersByCountry(idCountry: number) {
-    this.PlayerService.getPlayerByCountry(idCountry).subscribe((data: any) =>
-      this.players = data[0].players
-    );
+    this.PlayerService.getPlayerByCountry(idCountry).subscribe((data: any) => {
+      // Nunca leer por índice sin comprobar longitud: con la cuota agotada el
+      // backend devuelve una lista vacía y esto dejaba la pantalla en blanco.
+      this.players = data?.[0]?.players ?? [];
+    });
   }
 
     // ── Obtener jugadores del país seleccionado ────────────────────────────────
@@ -117,9 +128,11 @@ export class CountryComponent implements OnInit {
   // ── Obtener información del país seleccionado ──────────────────────────────
   getInfoCountry(countryName: string) {
     this.countryService.getInfoCountry(countryName).subscribe((data: any) => {
-      this.countryInfo = data[0].team;
-      this.getLeaguesHasPlayedCountry(data[0].team.id);
-      this.getPlayersByCountry(data[0].team.id);
+      const team = data?.[0]?.team;
+      if (!team) { this.countryInfo = null; this.players = []; return; }
+      this.countryInfo = team;
+      this.getLeaguesHasPlayedCountry(team.id);
+      this.getPlayersByCountry(team.id);
     });
   }
 
@@ -151,7 +164,7 @@ export class CountryComponent implements OnInit {
   getPlayerStats(playerId: number) {
     console.log(`Cargando stats del jugador ${playerId} para la temporada 2024 en component country...`);
     this.router.navigate(['/jugador', playerId], {
-      queryParams: { season: 2026 } 
+      queryParams: { season: this.season }
     });
   }
 
@@ -167,6 +180,7 @@ export class CountryComponent implements OnInit {
   //  ── Obtener ligas activas del país seleccionado ─────────────────────────────
   getLeaguesByCountry(countryName: string): void {
     this.leagueService.getLiguesByCountry(countryName).subscribe((data: any) => {
+      if (!Array.isArray(data)) { this.activeLeagues = []; return; }
       this.activeLeagues = (data as any[])
         .filter(item => item.seasons.some((s: any) => s.current === true))
         .map(item => ({

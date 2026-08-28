@@ -1,0 +1,62 @@
+<div class="buscador">
+
+  <button class="buscador__volver" (click)="volver()">&#8592; Volver a países</button>
+
+  <header class="buscador__cab">
+    <h1 class="buscador__titulo bebas">Buscar jugador</h1>
+    <p class="buscador__sub">
+      Escribe un nombre y entra directo a su ficha, sin recorrer país, liga y equipo.
+    </p>
+  </header>
+
+  <label class="sr-only" for="campo-busqueda">Nombre del jugador</label>
+  <input
+    id="campo-busqueda"
+    class="buscador__input"
+    type="search"
+    [formControl]="busqueda"
+    placeholder="Ej: Haaland"
+    autocomplete="off"
+    aria-describedby="ayuda-busqueda" />
+  <p class="buscador__ayuda" id="ayuda-busqueda">
+    Mínimo {{ minBusqueda }} caracteres.
+  </p>
+
+  @if (buscando()) {
+    <p class="buscador__estado">Buscando…</p>
+  }
+
+  @if (error()) {
+    <p class="buscador__error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!buscando() && buscado() && resultados().length === 0) {
+    <p class="buscador__estado">Ningún jugador coincide con esa búsqueda.</p>
+  }
+
+  <ul class="buscador__lista">
+    @for (jugador of resultados(); track jugador.player_id) {
+      <li>
+        <button type="button" class="jugador" (click)="abrirFicha(jugador)">
+          @if (jugador.photo) {
+            <img class="jugador__foto" [src]="jugador.photo"
+                 [alt]="'Foto de ' + jugador.name" />
+          } @else {
+            <span class="jugador__foto jugador__foto--vacia" aria-hidden="true">
+              {{ iniciales(jugador.name) }}
+            </span>
+          }
+          <span class="jugador__datos">
+            <span class="jugador__nombre">{{ jugador.name }}</span>
+            <span class="jugador__meta">
+              {{ jugador.position || 'Posición desconocida' }}
+              @if (jugador.nationality) { · {{ jugador.nationality }} }
+              @if (jugador.age) { · {{ jugador.age }} años }
+            </span>
+          </span>
+          <span class="jugador__flecha" aria-hidden="true">→</span>
+        </button>
+      </li>
+    }
+  </ul>
+</div>

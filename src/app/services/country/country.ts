@@ -1,27 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Country {
-  
-  private apiUrl = 'http://127.0.0.1:8000/countries/';
 
-  constructor(
-    private http: HttpClient
-  ) {
-
-   }
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/countries`;
 
   getCountries() {
-    return this.http.get(this.apiUrl);
+    return this.http.get(`${this.apiUrl}/`);
   }
 
   getInfoCountry(name: string) {
-    console.log('Obteniendo service información del país:', name);
-    return this.http.get(`${this.apiUrl}${name}`);
+    return this.http.get(`${this.apiUrl}/${encodeURIComponent(name)}`);
   }
-  
 
 }
