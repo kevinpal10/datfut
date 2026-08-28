@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+* { box-sizing: border-box; }
+
+.page {
+  font-family: 'DM Sans', sans-serif;
+  background: #060f1f;
+  min-height: 100vh;
+  padding: 24px;
+  color: #fff;
+}
+
+.back-btn {
+  background: none; border: none; color: rgba(255,255,255,0.6);
+  font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  margin-bottom: 16px; padding: 0;
+}
+.back-btn:hover { color: #fff; }
+
+.loading-state {
+  font-family: 'DM Sans', sans-serif;
+  background: #060f1f; min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.5); font-size: 14px;
+}
+
+/* Contenedor único */
+.dashboard {
+  max-width: 1160px; margin: 0 auto;
+  background: #0a1628; border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 16px; overflow: hidden;
+  display: grid; grid-template-columns: 300px 1fr;
+}
+
+/* Pills */
+.pill { font-size: 11px; font-weight: 500; padding: 2px 10px; border-radius: 20px; display: inline-block; }
+.pill-green { background: rgba(37,200,147,0.15); color: #25C893; }
+.pill-amber { background: rgba(239,159,39,0.15); color: #F0B860; }
+.pill-gray  { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+
+/* ── IZQUIERDA ── */
+.left {
+  background: #0d1b30;
+  border-right: 0.5px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; position: relative;
+}
+.left-flag {
+  position: absolute; top:0; left:0; right:0; height: 180px;
+  background-size: cover; background-position: center; opacity: 0.14;
+}
+.left-content {
+  position: relative; z-index: 1; padding: 28px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; flex: 1;
+}
+.player-photo {
+  width: 110px; height: 110px; border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.15);
+  object-fit: cover; background: #1a2942;
+}
+.player-name { font-size: 24px; font-weight: 700; margin: 16px 0 3px; }
+.player-full { font-size: 12px; color: rgba(255,255,255,0.5); margin: 0 0 4px; }
+.player-team { font-size: 14px; font-weight: 500; color: #25C893; margin: 0 0 14px; }
+.left-badges { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+
+.info-block { width: 100%; margin-top: auto; }
+.info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-top: 0.5px solid rgba(255,255,255,0.08);
+}
+.info-lbl { font-size: 12px; color: rgba(255,255,255,0.5); }
+.info-val { font-size: 13px; font-weight: 500; color: #fff; }
+
+/* ── DERECHA ── */
+.right { padding: 24px 28px; display: flex; flex-direction: column; gap: 22px; }
+
+.league-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.league-tab {
+  display: flex; align-items: center; gap: 7px; padding: 6px 12px;
+  border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04); cursor: pointer;
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7);
+}
+.league-tab.active { border-color: #378ADD; background: rgba(55,138,221,0.18); color: #6FB1F0; }
+.league-tab.overall { border-style: dashed; border-color: #1D9E75; background: rgba(29,158,117,0.12); color: #25C893; }
+.lt-logo { width: 18px; height: 18px; object-fit: contain; background: #fff; border-radius: 4px; padding: 1px; }
+
+.totals {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 0;
+  border: 0.5px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden;
+}
+.total-cell { padding: 14px 8px; text-align: center; border-right: 0.5px solid rgba(255,255,255,0.08); }
+.total-cell:last-child { border-right: none; }
+.total-num { font-size: 24px; font-weight: 700; line-height: 1; display: block; margin-bottom: 4px; }
+.total-lbl { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+.mid-row { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: center; }
+.rings-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+.counts {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  border-top: 0.5px solid rgba(255,255,255,0.08); padding-top: 18px;
+}
+.count-item { display: flex; align-items: center; gap: 10px; }
+.count-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.count-num { font-size: 18px; font-weight: 700; line-height: 1; }
+.count-lbl { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* Responsive: en pantallas chicas apila los paneles */
+@media (max-width: 760px) {
+  .dashboard { grid-template-columns: 1fr; }
+  .left { border-right: none; border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+  .mid-row { grid-template-columns: 1fr; }
+  .totals { grid-template-columns: repeat(3, 1fr); }
+}

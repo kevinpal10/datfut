@@ -1,0 +1,74 @@
+    <div class="col">
+      <p class="section-label">{{ teamName() }} · Alineación propuesta</p>
+
+      <div class="card field-card">
+        <svg
+          [attr.viewBox]="'0 0 ' + fieldW + ' ' + fieldH"
+          xmlns="http://www.w3.org/2000/svg"
+          class="field-svg"
+          role="img"
+          [attr.aria-label]="'Campo táctico con formación ' + formation().scheme">
+
+          <!-- Campo -->
+          <rect [attr.width]="fieldW" [attr.height]="fieldH" rx="8" fill="#1a6b30"/>
+
+          <!-- Líneas del campo -->
+          <rect x="16" y="16" width="228" height="328" rx="4"
+                fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <line x1="16" y1="180" x2="244" y2="180"
+                stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <circle cx="130" cy="180" r="30"
+                  fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <circle cx="130" cy="180" r="2" fill="rgba(255,255,255,0.4)"/>
+
+          <!-- Áreas de penal -->
+          <rect x="64" y="16" width="132" height="52" rx="2"
+                fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+          <rect x="64" y="292" width="132" height="52" rx="2"
+                fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+          <!-- Arcos -->
+          <rect x="96" y="12" width="68" height="12" rx="2" fill="rgba(255,255,255,0.15)"/>
+          <rect x="96" y="336" width="68" height="12" rx="2" fill="rgba(255,255,255,0.15)"/>
+
+          <!-- Etiqueta del esquema -->
+          <rect x="88" y="20" width="84" height="18" rx="4" fill="rgba(0,0,0,0.45)"/>
+          <text x="130" y="32" text-anchor="middle"
+                font-family="'DM Sans', sans-serif" font-size="10"
+                fill="rgba(255,255,255,0.8)">
+            {{ formation().scheme }} · {{ formation().description }}
+          </text>
+
+          <!-- Jugadores -->
+          @for (player of formation().players; track player.id) {
+            <g [attr.transform]="playerTransform(player)">
+              <circle r="14"
+                      [attr.fill]="roleColor(player.role)"
+                      stroke="white" stroke-width="2"/>
+              <text text-anchor="middle" y="4"
+                    font-family="'Bebas Neue', sans-serif"
+                    font-size="9"
+                    [attr.fill]="roleTextColor(player.role)">
+                {{ player.shortName }}
+              </text>
+            </g>
+          }
+
+          <!-- Flecha dirección de ataque -->
+          <text x="246" y="185" text-anchor="end"
+                font-family="'DM Sans', sans-serif" font-size="9"
+                fill="rgba(255,255,255,0.3)">▲ ataque</text>
+        </svg>
+      </div>
+
+      <!-- Lista de jugadores -->
+      <div class="players-list">
+        @for (player of formation().players; track player.id) {
+          <div class="player-row">
+            <span class="p-role-dot" [style.background]="roleColor(player.role)"></span>
+            <span class="p-name">{{ player.fullName }}</span>
+            <span class="p-pos">{{ player.position }}</span>
+          </div>
+        }
+      </div>
+    </div>

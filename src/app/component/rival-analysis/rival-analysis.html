@@ -1,0 +1,72 @@
+<div class="col">
+
+      <!-- Forma reciente -->
+      <section>
+        <p class="section-label">{{ teamName() }} · Forma reciente</p>
+        <div class="card">
+          <div class="form-summary">
+            <div>
+              <div class="big-num" style="color: #1D9E75;">
+                {{ analysis().stats.wins }}G ·
+                {{ analysis().stats.draws }}E ·
+                {{ analysis().stats.losses }}P
+              </div>
+              <div class="sub-label">Últimos {{ analysis().stats.gamesPlayed }} partidos</div>
+            </div>
+            <div class="form-badges">
+              @for (result of analysis().recentForm.slice(0, 5); track $index) {
+                <span class="tag" [ngClass]="resultClass(result)">{{ result }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-num green">{{ analysis().stats.goalsPerGame | number:'1.1-1' }}</span>
+              <span class="stat-desc">Goles/partido</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num blue">{{ analysis().stats.possessionAvg }}%</span>
+              <span class="stat-desc">Posesión media</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-num amber">{{ analysis().stats.goalsAgainstPerGame | number:'1.1-1' }}</span>
+              <span class="stat-desc">Goles recibidos</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fortalezas -->
+      <section>
+        <p class="section-label">⚡ Fortalezas</p>
+        <div class="card">
+          @for (point of analysis().strengths; track point.title) {
+            <div class="sw-row">
+              <span class="dot" [style.background]="severityColor(point.severity, 'strength')"></span>
+              <div>
+                <p class="sw-title">{{ point.title }}</p>
+                <p class="sw-desc">{{ point.description }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Debilidades -->
+      <section>
+        <p class="section-label">🎯 Debilidades a explotar</p>
+        <div class="card">
+          @for (point of analysis().weaknesses; track point.title) {
+            <div class="sw-row">
+              <span class="dot" [style.background]="severityColor(point.severity, 'weakness')"></span>
+              <div>
+                <p class="sw-title">{{ point.title }}</p>
+                <p class="sw-desc">{{ point.description }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+    </div>

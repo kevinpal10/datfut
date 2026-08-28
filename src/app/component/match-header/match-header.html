@@ -1,0 +1,17 @@
+<div class="hero">
+      <div class="match-info">
+        <h1 class="match-title">
+          {{ homeTeam().flag }} {{ homeTeam().name }}
+          <span class="vs">vs</span>
+          {{ awayTeam().name }} {{ awayTeam().flag }}
+        </h1>
+        <p class="match-meta">
+          {{ competition() }} · {{ phase() }} · Análisis táctico
+        </p>
+      </div>
+
+      <div class="scheme-badge">
+        <span class="pill pill-blue">Planteo: {{ awayTeam().shortName }}</span>
+        <span class="scheme-label">Esquema propuesto: {{ scheme() }}</span>
+      </div>
+    </div>

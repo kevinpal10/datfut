@@ -1,0 +1,107 @@
+<div class="page" *ngIf="!loading && playerData">
+
+  <!-- Botón volver flotante -->
+  <button class="back-btn" (click)="goBack()">&#8592; Volver</button>
+
+  <div class="dashboard">
+
+    <!-- ══ PANEL IZQUIERDO ══ -->
+    <div class="left">
+      <div class="left-flag" [style.background-image]="'url(' + activeStatistic?.league?.flag + ')'"></div>
+      <div class="left-content">
+        <img [src]="playerData.player.photo" [alt]="playerData.player.name"
+             class="player-photo" onerror="this.style.opacity='0.3'">
+        <p class="player-name">{{ playerData.player.name }}</p>
+        <p class="player-full">{{ playerData.player.firstname }} {{ playerData.player.lastname }}</p>
+        <p class="player-team">{{ activeStatistic?.team?.name }}</p>
+        <div class="left-badges">
+          <span class="pill pill-green" *ngIf="activeStatistic">{{ positionLabel(activeStatistic.games.position) }}</span>
+          <span class="pill pill-amber">{{ playerData.player.age }} años</span>
+          <span class="pill pill-gray">{{ playerData.player.nationality }}</span>
+        </div>
+        <div class="info-block">
+          <div class="info-row"><span class="info-lbl">Nacimiento</span><span class="info-val">{{ playerData.player.birth.date }}</span></div>
+          <div class="info-row"><span class="info-lbl">Ciudad</span><span class="info-val">{{ playerData.player.birth.place }}</span></div>
+          <div class="info-row"><span class="info-lbl">Altura</span><span class="info-val">{{ playerData.player.height }}</span></div>
+          <div class="info-row"><span class="info-lbl">Peso</span><span class="info-val">{{ playerData.player.weight }}</span></div>
+          <div class="info-row">
+            <span class="info-lbl">Estado</span>
+            <span class="info-val" [style.color]="playerData.player.injured ? '#F56C6C' : '#25C893'">
+              {{ playerData.player.injured ? 'Lesionado' : 'Disponible' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL DERECHO ══ -->
+    <div class="right">
+
+      <!-- Liga tabs -->
+      <div class="league-tabs">
+        <div class="league-tab"
+             *ngFor="let stat of playerData.statistics; let i = index"
+             [class.active]="i === activeIndex && !showOverall"
+             (click)="selectLeague(i)">
+          <img [src]="stat.league.logo" [alt]="stat.league.name" class="lt-logo" onerror="this.style.display='none'">
+          {{ stat.league.name }}
+        </div>
+        <div class="league-tab overall" [class.active]="showOverall" (click)="selectLeague('overall')">
+          📊 Resumen general
+        </div>
+      </div>
+
+      <!-- Totales -->
+      <div class="totals" *ngIf="currentStatCards() as cards">
+        <div class="total-cell" *ngFor="let c of cards">
+          <span class="total-num" [style.color]="c.num === '—' ? 'rgba(255,255,255,0.3)' : c.color">{{ c.num }}</span>
+          <span class="total-lbl">{{ c.lbl }}</span>
+        </div>
+      </div>
+
+      <!-- Radar + Efectividades -->
+      <div class="mid-row">
+
+        <!-- Radar -->
+        <svg viewBox="0 0 300 270" style="width:100%;" *ngIf="getRadarMetrics() as radar">
+          <g stroke="rgba(255,255,255,0.12)" fill="none" stroke-width="1">
+            <polygon [attr.points]="radarPolygon(radar, 1)"/>
+            <polygon [attr.points]="radarPolygon(radar, 0.66)"/>
+            <polygon [attr.points]="radarPolygon(radar, 0.33)"/>
+          </g>
+          <g stroke="rgba(255,255,255,0.12)" stroke-width="1">
+            <line *ngFor="let p of radarAxes(radar)" [attr.x1]="150" [attr.y1]="140" [attr.x2]="p.x" [attr.y2]="p.y"/>
+          </g>
+          <polygon [attr.points]="radarDataPolygon(radar)" fill="#25C893" fill-opacity="0.3" stroke="#25C893" stroke-width="2"/>
+          <g fill="#25C893">
+            <circle *ngFor="let p of radarDataPoints(radar)" [attr.cx]="p.x" [attr.cy]="p.y" r="3.5"/>
+          </g>
+          <g font-size="10" fill="rgba(255,255,255,0.55)" font-family="'DM Sans',sans-serif">
+            <text *ngFor="let l of radarLabels(radar)" [attr.x]="l.x" [attr.y]="l.y" [attr.text-anchor]="l.anchor">{{ l.label }}</text>
+          </g>
+        </svg>
+
+        <!-- Anillos de efectividad -->
+        <div class="rings-grid">
+          <app-ring-gauge
+            *ngFor="let r of currentRingMetrics()"
+            [pct]="r.pct" [color]="r.color" [label]="r.label" [detail]="r.detail"/>
+        </div>
+      </div>
+
+      <!-- Volumen de juego -->
+      <div class="counts" *ngIf="!showOverall && activeStatistic">
+        <div class="count-item" *ngFor="let c of getCountMetrics(activeStatistic)">
+          <div class="count-icon" [style.background]="c.bg">{{ c.icon }}</div>
+          <div>
+            <div class="count-num">{{ c.num }}</div>
+            <div class="count-lbl">{{ c.lbl }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="loading">Cargando jugador...</div>

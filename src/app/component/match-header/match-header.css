@@ -1,0 +1,43 @@
+.hero {
+      background: #0a1628;
+      border-radius: 12px 12px 0 0;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .match-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: #fff;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .vs {
+      font-size: 18px;
+      color: rgba(255,255,255,0.4);
+      margin: 0 8px;
+    }
+    .match-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      margin: 4px 0 0;
+    }
+    .scheme-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .pill-blue {
+      background: #378ADD;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .scheme-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+    }

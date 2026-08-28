@@ -1,0 +1,188 @@
+<div class="page-wrapper">
+
+  <!-- Botón volver (solo en modo equipo) -->
+  <button class="back-btn" *ngIf="isTeamMode" (click)="goBack()">
+    &#8592; Volver al campeonato
+  </button>
+
+  <!-- Buscador (solo en modo país) -->
+  <mat-form-field appearance="outline" class="search-field" *ngIf="!isTeamMode">
+    <mat-label>Buscar selección</mat-label>
+    <input
+      type="text"
+      matInput
+      placeholder="Ej: Ecuador, Argentina..."
+      [formControl]="searchControl"
+      [matAutocomplete]="auto">
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="displayCountry"
+      (optionSelected)="onCountrySelected($event)">
+      <mat-option *ngFor="let country of filteredCountry" [value]="country.name">
+        {{ country.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <ng-container *ngIf="countryInfo">
+    <!-- ── Info país/equipo + Campeonatos ─────────────────────────────────── -->
+    <div class="top-grid">
+      <!-- Tarjeta país/equipo -->
+      <div class="country-card">
+        <div
+          class="country-cover"
+          [style.background-image]="!isTeamMode ? 'url(' + selectedCountryComplete?.flag + ')' : ''">
+        </div>
+        <div class="country-body">
+          <img
+            [src]="countryInfo.logo"
+            [alt]="countryInfo.name"
+            class="country-logo"
+            onerror="this.style.display='none'">
+
+          <div class="country-titles">
+            <h2 class="country-name">{{ countryInfo.name }}</h2>
+            <span class="badge badge-green">{{ countryInfo.code }}</span>
+          </div>
+        </div>
+
+        <div class="country-stats">
+          <div class="stat-box">
+            <span class="stat-label">Fundado</span>
+            <span class="stat-value">{{ countryInfo.founded ?? '—' }}</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Team ID</span>
+            <span class="stat-value">{{ countryInfo.id }}</span>
+          </div>
+          <div class="stat-box full" *ngIf="!isTeamMode">
+            <span class="stat-label">Selección nacional</span>
+            <span class="stat-value">{{ countryInfo.national ? 'Sí' : 'No' }}</span>
+          </div>
+          <div class="stat-box full" *ngIf="isTeamMode">
+            <span class="stat-label">País</span>
+            <span class="stat-value">{{ countryInfo.country }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------------------------------------------- -->
+      <!-- ---------------------------------------------------- -->
+      <!-- Campeonatos en curso (solo si es selección nacional) -->
+      <!-- ---------------------------------------------------- -->
+      <!-- ---------------------------------------------------- -->
+
+      <div class="leagues-card" *ngIf="countryInfo.national && activeLeagues.length">
+
+        <div class="leagues-header">
+          <span class="section-label" style="margin:0;">Campeonatos en curso</span>
+          <span class="badge badge-green">{{ activeLeagues.length }} activos</span>
+        </div>
+
+        <div class="leagues-scroll">
+          <div
+            class="league-row"
+            *ngFor="let league of activeLeagues"
+            (click)="goToLeague(league)">
+            <div class="league-info">
+              <img
+                [src]="league.logo"
+                [alt]="league.name"
+                class="league-logo"
+                onerror="this.style.display='none'">
+              <span class="league-name-text">{{ league.name }}</span>
+            </div>
+            <span
+              class="badge"
+              [ngClass]="league.type === 'League' ? 'badge-blue' : 'badge-amber'">
+              {{ league.type === 'League' ? 'Liga' : 'Copa' }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ── Separador Jugadores ────────────────────────────────────────────── -->
+    <div class="section-divider">
+      <span>Jugadores</span>
+      <hr>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ──────────────────── Métricas de posición ─────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <span class="metric-num">{{ players.length }}</span>
+        <span class="metric-lbl">Total</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num" style="color:#1D9E75;">{{ countByPosition('Goalkeeper') }}</span>
+        <span class="metric-lbl">Porteros</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num" style="color:#378ADD;">{{ countByPosition('Defender') }}</span>
+        <span class="metric-lbl">Defensas</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num" style="color:#EF9F27;">{{ countByPosition('Midfielder') }}</span>
+        <span class="metric-lbl">Mediocampistas</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num" style="color:#E24B4A;">{{ countByPosition('Attacker') }}</span>
+        <span class="metric-lbl">Delanteros</span>
+      </div>
+    </div>
+
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ──────────────────── Listado de jugadores por posición ────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────────── -->
+
+    <div class="players-table" *ngIf="players.length">
+      <div class="table-header">
+        <span>Jugador</span>
+        <span class="col-center">#</span>
+        <span>Posición</span>
+        <span class="col-center">Edad</span>
+      </div>
+
+      <div
+        class="player-row"
+        *ngFor="let player of players"
+        (click)="getPlayerStats(player.id)">
+
+        <div class="player-info">
+          <img
+            [src]="player.photo"
+            [alt]="player.name"
+            class="player-avatar"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+          <div class="player-initials" style="display:none">
+            {{ initials(player.name) }}
+          </div>
+          <span class="player-name">{{ player.name }}</span>
+        </div>
+        <span class="col-center player-number">{{ player.number ?? '—' }}</span>
+        <span class="position-badge" [ngClass]="positionClass(player.position)">
+          {{ positionLabel(player.position) }}
+        </span>
+        <span class="col-center player-age">{{ player.age }}</span>
+
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!countryInfo && !isTeamMode">
+    <p>Busca una selección para ver su información y plantel</p>
+  </div>
+
+</div>

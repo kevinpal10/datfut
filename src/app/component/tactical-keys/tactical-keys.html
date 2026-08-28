@@ -1,0 +1,16 @@
+<section class="tactical-keys">
+    <p class="section-label">🧠 Claves tácticas</p>
+    <div class="card">
+    @for (key of keys(); track key.title) {
+        <div class="key-row">
+        <span class="key-icon" [ngClass]="'icon-' + key.type">
+            {{ typeIcon(key.type) }}
+        </span>
+        <div>
+            <p class="key-title">{{ key.title }}</p>
+            <p class="key-desc">{{ key.description }}</p>
+        </div>
+        </div>
+    }
+    </div>
+</section>

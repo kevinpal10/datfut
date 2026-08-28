@@ -1,0 +1,60 @@
+<div class="page-wrapper">
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <p>Cargando equipos...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Botón volver -->
+    <button class="back-btn" (click)="goBack()">
+      <span>&#8592;</span> Volver al país
+    </button>
+
+    <!-- Hero del campeonato -->
+    <div class="card">
+      <div class="league-hero">
+        <img
+          [src]="leagueLogo"
+          [alt]="leagueName"
+          class="league-logo-lg"
+          onerror="this.style.opacity='0.3'">
+        <div>
+          <h1 class="league-title">{{ leagueName }}</h1>
+          <p class="league-sub">{{ leagueCountry }} · Temporada {{ currentSeason }}</p>
+          <div class="badges">
+            <span class="badge badge-green">En curso</span>
+            <span class="badge badge-gray">{{ typeLabel(leagueType) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header equipos -->
+      <div class="teams-section-header">
+        <span class="section-label" style="margin:0;">
+          Equipos participantes · {{ teams.length }} equipos
+        </span>
+      </div>
+
+      <!-- Grid de equipos -->
+      <div class="teams-grid">
+        <div
+          class="team-card"
+          *ngFor="let item of teams"
+          (click)="goToTeam(item)">
+          <img
+            [src]="item.team.logo"
+            [alt]="item.team.name"
+            class="team-logo"
+            onerror="this.style.opacity='0.3'">
+          <span class="team-name">{{ item.team.name }}</span>
+          <span class="team-city">{{ item.venue.city }}</span>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>
