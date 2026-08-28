@@ -21,7 +21,11 @@ jobs:
           node-version: '20'
           cache: npm
 
-      - run: npm ci
+      # `npm ci` falla en Linux: el lockfile se genero en Windows y npm no
+      # registra ahi los paquetes @emnapi/* que `@rolldown/binding-wasm32-wasi`
+      # necesita en el runner. Volver a `npm ci` cuando el lockfile se
+      # regenere en Linux (o en CI) sin arrastrar cambios de version.
+      - run: npm install
 
       - name: Pruebas unitarias
         # ChromeHeadless ya viene en los runners de GitHub.
@@ -54,7 +58,11 @@ jobs:
           node-version: '20'
           cache: npm
 
-      - run: npm ci
+      # `npm ci` falla en Linux: el lockfile se genero en Windows y npm no
+      # registra ahi los paquetes @emnapi/* que `@rolldown/binding-wasm32-wasi`
+      # necesita en el runner. Volver a `npm ci` cuando el lockfile se
+      # regenere en Linux (o en CI) sin arrastrar cambios de version.
+      - run: npm install
 
       - name: Instalar navegador
         run: npx playwright install --with-deps chromium

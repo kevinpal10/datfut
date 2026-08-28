@@ -39,6 +39,10 @@ export class CountryComponent implements OnInit {
   isTeamMode = false;
   /** Temporada vigente del flujo; llega por query param desde el campeonato. */
   season = 0;
+  /** Mensaje visible cuando la carga falla. Sin esto la pantalla se
+   *  quedaba muda: el usuario elegía un país y no pasaba nada. */
+  errorCarga: string | null = null;
+  cargandoPais = false;
   activeLeagues: any[] = [];
   private route  = inject(ActivatedRoute);
   
@@ -127,12 +131,29 @@ export class CountryComponent implements OnInit {
 
   // ── Obtener información del país seleccionado ──────────────────────────────
   getInfoCountry(countryName: string) {
-    this.countryService.getInfoCountry(countryName).subscribe((data: any) => {
-      const team = data?.[0]?.team;
-      if (!team) { this.countryInfo = null; this.players = []; return; }
-      this.countryInfo = team;
-      this.getLeaguesHasPlayedCountry(team.id);
-      this.getPlayersByCountry(team.id);
+    this.cargandoPais = true;
+    this.errorCarga = null;
+
+    this.countryService.getInfoCountry(countryName).subscribe({
+      next: (data: any) => {
+        this.cargandoPais = false;
+        const team = data?.[0]?.team;
+        if (!team) {
+          this.countryInfo = null;
+          this.players = [];
+          this.errorCarga = `No encontramos la selección de ${countryName}.`;
+          return;
+        }
+        this.countryInfo = team;
+        this.getLeaguesHasPlayedCountry(team.id);
+        this.getPlayersByCountry(team.id);
+      },
+      error: (err: any) => {
+        this.cargandoPais = false;
+        this.countryInfo = null;
+        this.players = [];
+        this.errorCarga = this.mensajeDeError(err);
+      },
     });
   }
 
@@ -166,6 +187,28 @@ export class CountryComponent implements OnInit {
     this.router.navigate(['/jugador', playerId], {
       queryParams: { season: this.season }
     });
+  }
+
+  /** Traduce el `detail` tipado del backend a un mensaje útil.
+
+   *  Los tres casos vienen de `clients/errors.py`; cualquier otro cae al
+   *  mensaje genérico para no dejar al usuario sin explicación. */
+  private mensajeDeError(err: any): string {
+    const detalle = err?.error?.detail;
+    if (detalle === 'quota_exceeded') {
+      return 'Se agotó la cuota diaria de la API de fútbol. Vuelve a intentarlo mañana.';
+    }
+    if (detalle === 'auth_error') {
+      return 'La API de fútbol rechazó la credencial. Revisa el estado de la cuenta en api-football.';
+    }
+    if (detalle === 'upstream_error') {
+      return 'La API de fútbol no está disponible ahora mismo. Puede ser una caída temporal '
+           + 'o que la cuenta esté suspendida: compruébalo en api-football.';
+    }
+    if (detalle === 'database_error') {
+      return 'No pudimos leer el catálogo de países. Reinténtalo en unos segundos.';
+    }
+    return 'No pudimos cargar los datos. Reinténtalo en unos segundos.';
   }
 
   goBack(): void {

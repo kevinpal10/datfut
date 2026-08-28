@@ -29,7 +29,16 @@ export const LIGAS_ECUADOR = [
   {
     league: { id: 242, name: 'Liga Pro', type: 'League', logo: '' },
     country: { name: 'Ecuador', code: 'EC', flag: '' },
-    seasons: [{ year: 2024, start: '', end: '', current: true, coverage: {} }],
+    // 2025 a proposito: DEFAULT_SEASON es 2024, asi que si la temporada se
+    // pierde en algun salto la navegacion cae a 2024 y el E2E lo detecta.
+    seasons: [{ year: 2025, start: '', end: '', current: true, coverage: {} }],
+  },
+];
+
+export const EQUIPOS_LIGA_PRO = [
+  {
+    team: { id: 2382, name: 'Barcelona SC', code: 'BSC', country: 'Ecuador', founded: 1925, national: false, logo: '' },
+    venue: { id: 1, name: 'Monumental', address: '', city: 'Guayaquil', capacity: 59283, surface: 'grass', image: '' },
   },
 ];
 
@@ -122,7 +131,7 @@ export async function interceptarBackend(page: Page): Promise<void> {
     if (ruta === '/countries/') { return json(PAISES); }
     if (ruta.startsWith('/countries/')) { return json(SELECCION_ECUADOR); }
     if (ruta === '/players/search') { return json(BUSQUEDA_HAALAND); }
-    if (ruta.startsWith('/leagues/teams/')) { return json([]); }
+    if (ruta.startsWith('/leagues/teams/')) { return json(EQUIPOS_LIGA_PRO); }
     if (ruta.startsWith('/leagues/')) { return json(LIGAS_ECUADOR); }
     if (ruta.startsWith('/players/')) { return json(PLANTILLA); }
     if (ruta.startsWith('/statistics/') || ruta.startsWith('/statics/')) { return json(ESTADISTICAS_HAALAND); }

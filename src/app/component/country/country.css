@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
 
 * { box-sizing: border-box; }
 
@@ -315,3 +314,147 @@
 }
 .buscar-jugador a:hover { text-decoration: underline; }
 .buscar-jugador__sep { margin: 0 6px; color: #c0c0c0; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PORTADA
+   Antes esta pantalla era un campo de Material flotando arriba a la izquierda
+   y una frase suelta. Ahora explica qué es la aplicación y por dónde empezar.
+   Solo se muestra mientras no hay ninguna selección elegida.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.portada {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 40px;
+  align-items: center;
+  padding: 24px 0 40px;
+}
+
+.portada__kicker {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-green, #1D9E75);
+  margin-bottom: 10px;
+}
+
+.portada__titulo {
+  margin: 0;
+  font-size: clamp(38px, 5.2vw, 62px);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  color: var(--color-field-green, #1a6b30);
+}
+
+.portada__sub {
+  margin: 14px 0 26px;
+  max-width: 52ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #5b5b5b;
+}
+
+/* El buscador de Material dentro de la portada: a ancho completo y más alto,
+   para que sea lo primero que se ve y no un detalle en una esquina. */
+.portada__buscador { max-width: 460px; }
+.portada__buscador .search-field { width: 100%; }
+
+/* ── Atajos ─────────────────────────────────────────────────────────────── */
+
+.atajos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-top: 26px;
+  max-width: 560px;
+}
+
+.atajo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background: #fff;
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.atajo:hover {
+  border-color: var(--color-accent-green, #1D9E75);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.atajo__icono { font-size: 20px; line-height: 1.2; }
+.atajo__texto { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.atajo__texto strong { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.atajo__texto small { font-size: 12px; line-height: 1.45; color: #7a7a7a; }
+
+/* ── Ilustración ────────────────────────────────────────────────────────── */
+
+.portada__ilustracion { display: flex; justify-content: center; }
+
+.analista {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+}
+
+/* ── Barra compacta, ya con una selección elegida ───────────────────────── */
+
+.barra-busqueda {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.barra-busqueda .search-field { min-width: 280px; }
+
+.barra-busqueda__atajo {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent-green, #1D9E75);
+  text-decoration: none;
+  padding-bottom: 18px;
+}
+.barra-busqueda__atajo:hover { text-decoration: underline; }
+
+/* ── Responsive: en pantallas estrechas la ilustración va debajo ─────────── */
+
+@media (max-width: 900px) {
+  .portada {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  .portada__ilustracion { order: -1; }
+  .analista { max-width: 340px; }
+}
+
+@media (max-width: 520px) {
+  /* En móvil la ilustración roba demasiado espacio al contenido útil. */
+  .portada__ilustracion { display: none; }
+}
+
+/* Estados de carga y error del buscador de la portada. */
+.estado-carga,
+.estado-error {
+  margin: 10px 2px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.estado-carga { color: #7a7a7a; font-style: italic; }
+.estado-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(226, 75, 74, 0.08);
+  color: #a3312f;
+  max-width: 460px;
+}

@@ -6,10 +6,18 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Fuentes: UNA sola peticion, declarada solo aqui.
+       No anadir @import de Google Fonts en styles.css ni en el CSS de ningun
+       componente: Angular los inlinea en tiempo de build y cuentan contra el
+       presupuesto `anyComponentStyle`, que llego a romper el build de produccion.
+         - Bebas Neue -> numeros grandes (.bebas)
+         - DM Sans    -> cuerpo (pesos 400/500/600/700, los que usa el CSS)
+         - Roboto     -> lo exige el tema de Angular Material -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap">
 </head>
 <body class="mat-typography">
   <app-root></app-root>

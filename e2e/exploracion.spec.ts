@@ -17,6 +17,39 @@ test.describe('Exploración', () => {
     await interceptarBackend(page);
   });
 
+  test('recorre país → liga → equipo → ficha arrastrando la temporada', async ({ page }) => {
+    await page.goto('/paises');
+
+    // 1. País. El autocompletado se alimenta del catálogo propio en PostgreSQL,
+    //    no de api-football.
+    await page.getByLabel('Buscar selección').fill('Ecuador');
+    await page.getByRole('option', { name: 'Ecuador' }).click();
+    await expect(page.locator('.country-name')).toHaveText('Ecuador');
+
+    // 2. Liga. Sólo se listan las que tienen temporada vigente.
+    const liga = page.locator('.league-row').filter({ hasText: 'Liga Pro' });
+    await expect(liga).toBeVisible();
+    await liga.click();
+    await expect(page).toHaveURL(/\/campeonato\/242\?.*season=2025/);
+
+    // 3. Equipo. Volver a `/paises` con `teamId` cambia el modo del componente.
+    const equipo = page.locator('.team-card').filter({ hasText: 'Barcelona SC' });
+    await expect(equipo).toBeVisible();
+    await equipo.click();
+    await expect(page).toHaveURL(/\/paises\?.*teamId=2382/);
+
+    // 4. Plantilla del equipo → ficha del jugador.
+    const jugador = page.locator('.player-row').filter({ hasText: 'E. Haaland' });
+    await expect(jugador).toBeVisible();
+    await jugador.click();
+
+    // La temporada elegida en el campeonato llega intacta al último salto.
+    // Si se perdiera, `parseSeason` caería a 2024 y esta aserción fallaría.
+    await expect(page).toHaveURL(/\/jugador\/1100\?season=2025/);
+    await expect(page.getByText('Cargando jugador...')).toHaveCount(0);
+    await expect(page.getByText('Manchester City')).toBeVisible();
+  });
+
   test('busca un jugador por nombre y abre su ficha con las métricas de su posición', async ({ page }) => {
     await page.goto('/buscar');
 
